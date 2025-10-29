@@ -49,8 +49,8 @@ public class Test {
 		for(String word: songSeparated) {
 			words.add(word);
 		}
-		words.remove(0);
-		words.remove(words.size - 1);
+		System.out.println("First Word: "+ words.remove(0));
+		System.out.println("Last Word: "+ words.remove(words.size -1));
 		for(int i = 0; i < words.size; i++) {
 			System.out.println( words.get(i));
 		}

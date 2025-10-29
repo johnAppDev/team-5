@@ -22,18 +22,22 @@ public class LinkedList<T> {
 			
 		}
 	}
-	public void remove(int index) {
+	public T remove(int index) {
 		Node<T> temp = startingNode;
+		Node<T> valueCopy = temp;
 		if(index == 0 ) {
 			startingNode = temp.getNext();
-			
+			size--;
+			return valueCopy.data;
 		}
 		for(int i = 0; i < index -1 ; i++) {
 			temp = temp.getNext();
 		}
+		 valueCopy = temp.getNext();
 		Node<T> newPointer = temp.getNext().getNext();
 		temp.setNext(newPointer);
 		size --;
+		return valueCopy.data;//valueCopy.data;
 		
 	}
 	public T get(int index) {
