@@ -1,4 +1,4 @@
-package listComparison;
+package linkedListPkg;
 
 public class Test {
 	public static void main(String[] args) {
@@ -45,13 +45,15 @@ public class Test {
 				+ "Never gonna run around and desert you "
 				+ "Never gonna make you cry, never gonna say goodbye "
 				+ "Never gonna tell a lie and hurt you";
+		
 		String[] songSeparated = song.split(" ");
 		for(String word: songSeparated) {
 			words.add(word);
 		}
+		
 		System.out.println("First Word: "+ words.remove(0));
-		System.out.println("Last Word: "+ words.remove(words.size -1));
-		for(int i = 0; i < words.size; i++) {
+		System.out.println("Last Word: "+ words.remove(words.size() - 1));
+		for(int i = 0; i < words.size(); i++) {
 			System.out.println( words.get(i));
 		}
 		//System.out.println(words.get(words.size-1));

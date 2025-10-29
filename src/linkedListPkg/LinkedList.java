@@ -1,11 +1,14 @@
-package listComparison;
+package linkedListPkg;
 
 public class LinkedList<T> {
-	int size;
+	
+	private int size;
 	Node<T> startingNode;
+	
 	public LinkedList() {
 		size = 0;
 	}
+	
 	public void add(T data) {
 		size++;
 		if(startingNode == null) {
@@ -22,13 +25,14 @@ public class LinkedList<T> {
 			
 		}
 	}
+	
 	public T remove(int index) {
 		Node<T> temp = startingNode;
 		Node<T> valueCopy = temp;
 		if(index == 0 ) {
 			startingNode = temp.getNext();
 			size--;
-			return valueCopy.data;
+			return valueCopy.getData();
 		}
 		for(int i = 0; i < index -1 ; i++) {
 			temp = temp.getNext();
@@ -37,16 +41,18 @@ public class LinkedList<T> {
 		Node<T> newPointer = temp.getNext().getNext();
 		temp.setNext(newPointer);
 		size --;
-		return valueCopy.data;//valueCopy.data;
+		return valueCopy.getData();//valueCopy.data;
 		
 	}
+	
 	public T get(int index) {
 		Node<T> temp = startingNode;
 		for(int i = 0; i < index; i++) {
 			temp = temp.getNext();
 		}
-		return temp.data;
+		return temp.getData();
 	}
+	
 	public int size() {
 		return size;
 	}
