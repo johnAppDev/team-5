@@ -22,6 +22,22 @@ public class ArrayList<T> {
 		data[size] = element;
 		size++;
 	}
+	
+	// Add an element at a specific index
+	public void add(int index, T element) {
+        if (index < 0 || index > size) { // allow index == size (append)
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        if (size == capacity) {
+            resize();
+        }
+        // Shift elements to the right
+        for (int i = size - 1; i >= index; i--) {
+            data[i + 1] = data[i];
+        }
+        data[index] = element;
+        size++;
+    }
  
 	// Get element at index
 	public T get(int index) {
