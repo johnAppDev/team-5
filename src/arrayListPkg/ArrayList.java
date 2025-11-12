@@ -22,7 +22,7 @@ public class ArrayList<T> {
 		data[size] = element;
 		size++;
 	}
-
+ 
 	// Get element at index
 	public T get(int index) {
 		if (index < 0 || index >= size) {
