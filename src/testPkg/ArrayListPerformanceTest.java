@@ -2,208 +2,326 @@ package testPkg;
 
 public class ArrayListPerformanceTest {
 
+    private static final int N = 10;           // number of elements
+    private static final int ITERATIONS = 1000; // how many times each test runs
+
     public static void main(String[] args) {
-        int n = 100; // number of elements; adjust as needed
-        System.out.println("Testing add/remove performance with " + n + " elements...\n");
-        long start;
-        long end;
+        System.out.println("Testing performance with " + N + " elements");
+        System.out.println("Averaged over " + ITERATIONS + " iterations\n");
 
-        // ---------------------------------------------------------------------
-        // Java's built-in ArrayList
-        // ---------------------------------------------------------------------
-        java.util.ArrayList<Integer> javaList = new java.util.ArrayList<>();
-        for (int i = 0; i < n; i++) javaList.add(i);
-        System.out.println("Java's built-in ArrayList");
+        testJavaArrayList();
+        testCustomArrayList();
+        testJavaLinkedList();
+        testCustomLinkedList();
+    }
 
-        // --- Remove operations ---
-        start = System.nanoTime();
-        javaList.remove(javaList.size() - 1);
-        end = System.nanoTime();
-        System.out.println("java.util.ArrayList remove from end:          " + (end - start) + " ns");
+    // ---------------------------- Helpers ----------------------------
+    private static void fillList(java.util.List<Integer> list, int n) {
+        list.clear();
+        for (int i = 0; i < n; i++) list.add(i);
+    }
 
-        javaList.clear();
-        for (int i = 0; i < n; i++) javaList.add(i);
-        start = System.nanoTime();
-        javaList.remove(n / 2);
-        end = System.nanoTime();
-        System.out.println("java.util.ArrayList remove from middle:       " + (end - start) + " ns");
+    private static arrayListPkg.ArrayList<Integer> fillCustomArray(arrayListPkg.ArrayList<Integer> list, int n) {
+        list = new arrayListPkg.ArrayList<>();
+        for (int i = 0; i < n; i++) list.add(i);
+        return list;
+    }
 
-        javaList.clear();
-        for (int i = 0; i < n; i++) javaList.add(i);
-        start = System.nanoTime();
-        javaList.remove(0);
-        end = System.nanoTime();
-        System.out.println("java.util.ArrayList remove from beginning:    " + (end - start) + " ns");
+    private static linkedListPkg.LinkedList<Integer> fillCustomLinked(linkedListPkg.LinkedList<Integer> list, int n) {
+        list = new linkedListPkg.LinkedList<>();
+        for (int i = 0; i < n; i++) list.add(i);
+        return list;
+    }
 
-        // --- Add operations ---
-        javaList.clear();
-        for (int i = 0; i < n; i++) javaList.add(i);
-        start = System.nanoTime();
-        javaList.add(javaList.size(), 999);
-        end = System.nanoTime();
-        System.out.println("java.util.ArrayList add to end:               " + (end - start) + " ns");
+    private static void printAvg(String label, long total) {
+        System.out.printf("%-45s %10d ns%n", label, total / ITERATIONS);
+    }
 
-        javaList.clear();
-        for (int i = 0; i < n; i++) javaList.add(i);
-        start = System.nanoTime();
-        javaList.add(n / 2, 999);
-        end = System.nanoTime();
-        System.out.println("java.util.ArrayList add to middle:            " + (end - start) + " ns");
+    // ---------------------------- Java ArrayList ----------------------------
+    private static void testJavaArrayList() {
+        java.util.ArrayList<Integer> list = new java.util.ArrayList<>();
+        long start, end, total;
 
-        javaList.clear();
-        for (int i = 0; i < n; i++) javaList.add(i);
-        start = System.nanoTime();
-        javaList.add(0, 999);
-        end = System.nanoTime();
-        System.out.println("java.util.ArrayList add to beginning:         " + (end - start) + " ns\n");
+        // Remove end
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.remove(list.size() - 1);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("ArrayList remove end:", total);
 
+        // Remove middle
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.remove(N / 2);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("ArrayList remove middle:", total);
 
-        // ---------------------------------------------------------------------
-        // Custom ArrayList
-        // ---------------------------------------------------------------------
-        arrayListPkg.ArrayList<Integer> customJavaList = new arrayListPkg.ArrayList<Integer>();
-        for (int i = 0; i < n; i++) customJavaList.add(i);
-        System.out.println("Custom ArrayList");
+        // Remove beginning
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.remove(0);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("ArrayList remove beginning:", total);
 
-        // --- Remove operations ---
-        start = System.nanoTime();
-        customJavaList.remove(customJavaList.size() - 1);
-        end = System.nanoTime();
-        System.out.println("arrayListPkg.ArrayList remove from end:       " + (end - start) + " ns");
+        // Add end
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.add(list.size(), 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("ArrayList add end:", total);
 
-        customJavaList = new arrayListPkg.ArrayList<Integer>();
-        for (int i = 0; i < n; i++) customJavaList.add(i);
-        start = System.nanoTime();
-        customJavaList.remove(n / 2);
-        end = System.nanoTime();
-        System.out.println("arrayListPkg.ArrayList remove from middle:    " + (end - start) + " ns");
+        // Add middle
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.add(N / 2, 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("ArrayList add middle:", total);
 
-        customJavaList = new arrayListPkg.ArrayList<Integer>();
-        for (int i = 0; i < n; i++) customJavaList.add(i);
-        start = System.nanoTime();
-        customJavaList.remove(0);
-        end = System.nanoTime();
-        System.out.println("arrayListPkg.ArrayList remove from beginning: " + (end - start) + " ns");
+        // Add beginning
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.add(0, 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("ArrayList add beginning:", total);
+    }
 
-        // --- Add operations ---
-        customJavaList = new arrayListPkg.ArrayList<Integer>();
-        for (int i = 0; i < n; i++) customJavaList.add(i);
-        start = System.nanoTime();
-        customJavaList.add(customJavaList.size(), 999);
-        end = System.nanoTime();
-        System.out.println("arrayListPkg.ArrayList add to end:            " + (end - start) + " ns");
+    // ---------------------------- Custom ArrayList ----------------------------
+    private static void testCustomArrayList() {
+        arrayListPkg.ArrayList<Integer> list = new arrayListPkg.ArrayList<>();
+        long start, end, total;
 
-        customJavaList = new arrayListPkg.ArrayList<Integer>();
-        for (int i = 0; i < n; i++) customJavaList.add(i);
-        start = System.nanoTime();
-        customJavaList.add(n / 2, 999);
-        end = System.nanoTime();
-        System.out.println("arrayListPkg.ArrayList add to middle:         " + (end - start) + " ns");
+        // Remove end
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+        	list = fillCustomArray(list, N);
+            start = System.nanoTime();
+            list.remove(list.size() - 1);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom ArrayList remove end:", total);
 
-        customJavaList = new arrayListPkg.ArrayList<Integer>();
-        for (int i = 0; i < n; i++) customJavaList.add(i);
-        start = System.nanoTime();
-        customJavaList.add(0, 999);
-        end = System.nanoTime();
-        System.out.println("arrayListPkg.ArrayList add to beginning:      " + (end - start) + " ns");
-        
-        // ---------------------------------------------------------------------
-        // Java's built-in LinkedList
-        // ---------------------------------------------------------------------
-        java.util.LinkedList<Integer> linkedList = new java.util.LinkedList<>();
-        for (int i = 0; i < n; i++) linkedList.add(i);
-        System.out.println("\nJava's built-in LinkedList");
+        // Remove middle
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+        	list = fillCustomArray(list, N);
+            start = System.nanoTime();
+            list.remove(N / 2);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom ArrayList remove middle:", total);
 
-        // --- Remove operations ---
-        start = System.nanoTime();
-        linkedList.remove(linkedList.size() - 1);
-        end = System.nanoTime();
-        System.out.println("java.util.LinkedList remove from end:          " + (end - start) + " ns");
+        // Remove beginning
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+        	list = fillCustomArray(list, N);
+            start = System.nanoTime();
+            list.remove(0);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom ArrayList remove beginning:", total);
 
-        linkedList.clear();
-        for (int i = 0; i < n; i++) linkedList.add(i);
-        start = System.nanoTime();
-        linkedList.remove(n / 2);
-        end = System.nanoTime();
-        System.out.println("java.util.LinkedList remove from middle:       " + (end - start) + " ns");
+        // Add end
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+        	list = fillCustomArray(list, N);
+            start = System.nanoTime();
+            list.add(list.size(), 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom ArrayList add end:", total);
 
-        linkedList.clear();
-        for (int i = 0; i < n; i++) linkedList.add(i);
-        start = System.nanoTime();
-        linkedList.remove(0);
-        end = System.nanoTime();
-        System.out.println("java.util.LinkedList remove from beginning:    " + (end - start) + " ns");
+        // Add middle
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            list = fillCustomArray(list, N);
+            start = System.nanoTime();
+            list.add(N / 2, 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom ArrayList add middle:", total);
 
-        // --- Add operations ---
-        linkedList.clear();
-        for (int i = 0; i < n; i++) linkedList.add(i);
-        start = System.nanoTime();
-        linkedList.add(linkedList.size(), 999);
-        end = System.nanoTime();
-        System.out.println("java.util.LinkedList add to end:               " + (end - start) + " ns");
+        // Add beginning
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            list = fillCustomArray(list, N);
+            start = System.nanoTime();
+            list.add(0, 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom ArrayList add beginning:", total);
+    }
 
-        linkedList.clear();
-        for (int i = 0; i < n; i++) linkedList.add(i);
-        start = System.nanoTime();
-        linkedList.add(n / 2, 999);
-        end = System.nanoTime();
-        System.out.println("java.util.LinkedList add to middle:            " + (end - start) + " ns");
+    // ---------------------------- Java LinkedList ----------------------------
+    private static void testJavaLinkedList() {
+        java.util.LinkedList<Integer> list = new java.util.LinkedList<>();
+        long start, end, total;
 
-        linkedList.clear();
-        for (int i = 0; i < n; i++) linkedList.add(i);
-        start = System.nanoTime();
-        linkedList.add(0, 999);
-        end = System.nanoTime();
-        System.out.println("java.util.LinkedList add to beginning:         " + (end - start) + " ns\n");
+        // Remove end
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.remove(list.size() - 1);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("LinkedList remove end:", total);
 
+        // Remove middle
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.remove(N / 2);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("LinkedList remove middle:", total);
 
-        // ---------------------------------------------------------------------
-        // Custom LinkedList
-        // ---------------------------------------------------------------------
-        linkedListPkg.LinkedList<Integer> customLinkedList = new linkedListPkg.LinkedList<Integer>();
-        for (int i = 0; i < n; i++) customLinkedList.add(i);
-        System.out.println("Custom LinkedList");
+        // Remove beginning
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.remove(0);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("LinkedList remove beginning:", total);
 
-        // --- Remove operations ---
-        start = System.nanoTime();
-        customLinkedList.remove(customLinkedList.size() - 1);
-        end = System.nanoTime();
-        System.out.println("linkedListPkg.LinkedList remove from end:       " + (end - start) + " ns");
+        // Add end
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.add(list.size(), 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("LinkedList add end:", total);
 
-        customLinkedList = new linkedListPkg.LinkedList<Integer>();
-        for (int i = 0; i < n; i++) customLinkedList.add(i);
-        start = System.nanoTime();
-        customLinkedList.remove(n / 2);
-        end = System.nanoTime();
-        System.out.println("linkedListPkg.LinkedList remove from middle:    " + (end - start) + " ns");
+        // Add middle
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.add(N / 2, 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("LinkedList add middle:", total);
 
-        customLinkedList = new linkedListPkg.LinkedList<Integer>();
-        for (int i = 0; i < n; i++) customLinkedList.add(i);
-        start = System.nanoTime();
-        customLinkedList.remove(0);
-        end = System.nanoTime();
-        System.out.println("linkedListPkg.LinkedList remove from beginning: " + (end - start) + " ns");
+        // Add beginning
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            fillList(list, N);
+            start = System.nanoTime();
+            list.add(0, 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("LinkedList add beginning:", total);
+    }
 
-        // --- Add operations ---
-        customLinkedList = new linkedListPkg.LinkedList<Integer>();
-        for (int i = 0; i < n; i++) customLinkedList.add(i);
-        start = System.nanoTime();
-        customLinkedList.add(customLinkedList.size(), 999);
-        end = System.nanoTime();
-        System.out.println("linkedListPkg.LinkedList add to end:            " + (end - start) + " ns");
+    // ---------------------------- Custom LinkedList ----------------------------
+    private static void testCustomLinkedList() {
+        linkedListPkg.LinkedList<Integer> list = new linkedListPkg.LinkedList<>();
+        long start, end, total;
 
-        customLinkedList = new linkedListPkg.LinkedList<Integer>();
-        for (int i = 0; i < n; i++) customLinkedList.add(i);
-        start = System.nanoTime();
-        customLinkedList.add(n / 2, 999);
-        end = System.nanoTime();
-        System.out.println("linkedListPkg.LinkedList add to middle:         " + (end - start) + " ns");
+        // Remove end
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            list = fillCustomLinked(list, N);
+            start = System.nanoTime();
+            list.remove(list.size() - 1);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom LinkedList remove end:", total);
 
-        customLinkedList = new linkedListPkg.LinkedList<Integer>();
-        for (int i = 0; i < n; i++) customLinkedList.add(i);
-        start = System.nanoTime();
-        customLinkedList.add(0, 999);
-        end = System.nanoTime();
-        System.out.println("linkedListPkg.LinkedList add to beginning:      " + (end - start) + " ns");
+        // Remove middle
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            list = fillCustomLinked(list, N);
+            start = System.nanoTime();
+            list.remove(N / 2);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom LinkedList remove middle:", total);
+
+        // Remove beginning
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            list = fillCustomLinked(list, N);
+            start = System.nanoTime();
+            list.remove(0);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom LinkedList remove beginning:", total);
+
+        // Add end
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            list = fillCustomLinked(list, N);
+            start = System.nanoTime();
+            list.add(list.size(), 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom LinkedList add end:", total);
+
+        // Add middle
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            list = fillCustomLinked(list, N);
+            start = System.nanoTime();
+            list.add(N / 2, 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom LinkedList add middle:", total);
+
+        // Add beginning
+        total = 0;
+        for (int i = 0; i < ITERATIONS; i++) {
+            list = fillCustomLinked(list, N);
+            start = System.nanoTime();
+            list.add(0, 999);
+            end = System.nanoTime();
+            total += (end - start);
+        }
+        printAvg("Custom LinkedList add beginning:", total);
     }
 }
