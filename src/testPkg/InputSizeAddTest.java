@@ -1,15 +1,11 @@
 package testPkg;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 public class InputSizeAddTest {
 
     public static void main(String[] args) {
         // Input sizes to test
         int[] sizes = {100, 1000, 3000, 10000, 50000, 100000, 300000, 500000, 1000000};
-        int repetitions = 100; // run each test 25 times to average
+        int repetitions = 100; // run each test 100 times to average
 
         System.out.printf("%-18s %-12s %-15s%n", "ListType", "Size", "AvgAddTime(ns)");
         System.out.println("----------------------------------------------");
